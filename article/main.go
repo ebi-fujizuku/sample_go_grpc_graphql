@@ -48,7 +48,6 @@ func main() {
 	c.Update()
 	c.Delete()
 
-	// c.list()
 	// ServerStreamのgRPCクライアントを生成
 	c_ss :=&client.Client_ServerStream{
 		Service: pb.NewArticleServiceClient(conn),

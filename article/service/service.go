@@ -2,6 +2,9 @@ package service
 
 import (
 	"context"
+	"errors"
+	"fmt"
+	"io"
 
 	"github.com/ebi-fujizuku/sample_go_grpc_graphql/article/common"
 	"github.com/ebi-fujizuku/sample_go_grpc_graphql/article/pb"
@@ -120,4 +123,22 @@ func (s *Service)ListArticle(
 	}
 
 	return nil
+}
+
+func (s *Service)CreateArticles(stream pb.ArticleService_CreateArticlesServer)error{
+	common.PrintStart("")
+	articleList := make([]string,0)
+	for{
+		req,err := stream.Recv();
+		if errors.Is(err,io.EOF){
+			message := fmt.Sprintf("Create inputs, %v!",articleList)
+			return stream.SendAndClose(&pb.CreateArticlesResponse{
+				Message: message,
+			})
+		}
+		if err != nil{
+			return err
+		}
+		articleList = append(articleList, req.GetArticleInput())
+	}
 }

@@ -1,4 +1,5 @@
-// 05段階:確認
-grpcurl -plaintext -d '{"name": "hsaki"}' localhost:8080 myapp.GreetingService.Hello
-↓
+// 単方向ストリーミング
 grpcurl -plaintext -d '{"articleInput": "aaa"}' localhost:8080 article.ArticleService.CreateArticle
+
+// クライアントストリーミング
+grpcurl -plaintext -d '{"articleInput": "aaa"}{"articleInput": "bbb"}{"articleInput": "ccc"}' localhost:8080 article.ArticleService.CreateArticles

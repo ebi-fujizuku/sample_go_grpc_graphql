@@ -27,6 +27,7 @@ type ArticleServiceClient interface {
 	UpdateArticle(ctx context.Context, in *UpdateArticleRequest, opts ...grpc.CallOption) (*UpdateArticleResponse, error)
 	DeleteArticle(ctx context.Context, in *DeleteArticleRequest, opts ...grpc.CallOption) (*DeleteArticleResponse, error)
 	ListArticle(ctx context.Context, in *ListArticleRequest, opts ...grpc.CallOption) (ArticleService_ListArticleClient, error)
+	CreateArticles(ctx context.Context, opts ...grpc.CallOption) (ArticleService_CreateArticlesClient, error)
 }
 
 type articleServiceClient struct {
@@ -105,6 +106,40 @@ func (x *articleServiceListArticleClient) Recv() (*ListArticleResponse, error) {
 	return m, nil
 }
 
+func (c *articleServiceClient) CreateArticles(ctx context.Context, opts ...grpc.CallOption) (ArticleService_CreateArticlesClient, error) {
+	stream, err := c.cc.NewStream(ctx, &ArticleService_ServiceDesc.Streams[1], "/article.ArticleService/CreateArticles", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &articleServiceCreateArticlesClient{stream}
+	return x, nil
+}
+
+type ArticleService_CreateArticlesClient interface {
+	Send(*CreateArticlesRequest) error
+	CloseAndRecv() (*CreateArticlesResponse, error)
+	grpc.ClientStream
+}
+
+type articleServiceCreateArticlesClient struct {
+	grpc.ClientStream
+}
+
+func (x *articleServiceCreateArticlesClient) Send(m *CreateArticlesRequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *articleServiceCreateArticlesClient) CloseAndRecv() (*CreateArticlesResponse, error) {
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	m := new(CreateArticlesResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // ArticleServiceServer is the server API for ArticleService service.
 // All implementations must embed UnimplementedArticleServiceServer
 // for forward compatibility
@@ -114,6 +149,7 @@ type ArticleServiceServer interface {
 	UpdateArticle(context.Context, *UpdateArticleRequest) (*UpdateArticleResponse, error)
 	DeleteArticle(context.Context, *DeleteArticleRequest) (*DeleteArticleResponse, error)
 	ListArticle(*ListArticleRequest, ArticleService_ListArticleServer) error
+	CreateArticles(ArticleService_CreateArticlesServer) error
 	mustEmbedUnimplementedArticleServiceServer()
 }
 
@@ -135,6 +171,9 @@ func (UnimplementedArticleServiceServer) DeleteArticle(context.Context, *DeleteA
 }
 func (UnimplementedArticleServiceServer) ListArticle(*ListArticleRequest, ArticleService_ListArticleServer) error {
 	return status.Errorf(codes.Unimplemented, "method ListArticle not implemented")
+}
+func (UnimplementedArticleServiceServer) CreateArticles(ArticleService_CreateArticlesServer) error {
+	return status.Errorf(codes.Unimplemented, "method CreateArticles not implemented")
 }
 func (UnimplementedArticleServiceServer) mustEmbedUnimplementedArticleServiceServer() {}
 
@@ -242,6 +281,32 @@ func (x *articleServiceListArticleServer) Send(m *ListArticleResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
+func _ArticleService_CreateArticles_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(ArticleServiceServer).CreateArticles(&articleServiceCreateArticlesServer{stream})
+}
+
+type ArticleService_CreateArticlesServer interface {
+	SendAndClose(*CreateArticlesResponse) error
+	Recv() (*CreateArticlesRequest, error)
+	grpc.ServerStream
+}
+
+type articleServiceCreateArticlesServer struct {
+	grpc.ServerStream
+}
+
+func (x *articleServiceCreateArticlesServer) SendAndClose(m *CreateArticlesResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *articleServiceCreateArticlesServer) Recv() (*CreateArticlesRequest, error) {
+	m := new(CreateArticlesRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // ArticleService_ServiceDesc is the grpc.ServiceDesc for ArticleService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -271,6 +336,11 @@ var ArticleService_ServiceDesc = grpc.ServiceDesc{
 			StreamName:    "ListArticle",
 			Handler:       _ArticleService_ListArticle_Handler,
 			ServerStreams: true,
+		},
+		{
+			StreamName:    "CreateArticles",
+			Handler:       _ArticleService_CreateArticles_Handler,
+			ClientStreams: true,
 		},
 	},
 	Metadata: "article.proto",

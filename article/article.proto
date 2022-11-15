@@ -68,6 +68,18 @@ message ListArticleResponse{
 	Article article = 1;
 }
 
+// CREATEする複数記事の内容を受け取る
+message CreateArticlesRequest {
+	// ArticleInput articleInput = 1;
+	string articleInput = 1;
+}
+
+// CREATEした複数記事のIDを返す
+message CreateArticlesResponse {
+	// repeated int64 id = 1;
+	string message = 1;
+}
+
 // articleサービスを定義
 service ArticleService {
 	rpc CreateArticle(CreateArticleRequest) returns(CreateArticleResponse);
@@ -75,4 +87,5 @@ service ArticleService {
 	rpc UpdateArticle(UpdateArticleRequest) returns(UpdateArticleResponse);
 	rpc DeleteArticle(DeleteArticleRequest) returns(DeleteArticleResponse);
 	rpc ListArticle(ListArticleRequest) returns(stream ListArticleResponse);
+	rpc CreateArticles(stream CreateArticlesRequest) returns(CreateArticlesResponse);
 }
