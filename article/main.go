@@ -47,12 +47,17 @@ func main() {
 	c.Read()
 	c.Update()
 	c.Delete()
+	fmt.Println("--------------------------------")
 
 	// ServerStreamのgRPCクライアントを生成
 	c_ss :=&client.Client_ServerStream{
 		Service: pb.NewArticleServiceClient(conn),
 	}
 	c_ss.List()
-	common.PrintEnd("gRPC Client")
+	fmt.Println("--------------------------------")
 
+	// ClientStreamのgRPCクライアントを生成
+	c.Creates()
+
+	common.PrintEnd("gRPC Client")
 }

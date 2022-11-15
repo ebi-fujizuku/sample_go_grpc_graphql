@@ -75,6 +75,35 @@ func (c *Client)Delete() {
 	fmt.Printf("DeleteArticle Response: %v\n",res)
 }
 
+func (c *Client)Creates() {
+	stream,err := c.Service.CreateArticles(
+		context.Background(),
+	)
+	if err != nil{
+		log.Fatalf("Failed to CreatesArticle: %v\n",err)
+		return
+	}
+
+	titles := []string{"my hero academia","smile on runway","mob psycho 100"}
+	for _,title := range titles{
+		if err := stream.Send(&pb.CreateArticlesRequest{
+			ArticleInput: title,
+		}); err != nil{
+			fmt.Println(err)
+			return
+		}
+	}
+
+	res,err := stream.CloseAndRecv()
+	if err != nil{
+		fmt.Println(err)
+	}else{
+		fmt.Println(res.GetMessage())
+	}
+
+	fmt.Printf("CreatesArticle Response: %v\n",res)
+}
+
 
 
 type Client_ServerStream struct{
