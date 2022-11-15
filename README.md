@@ -15,15 +15,15 @@
 
 ## 利用する場合
 ### 必須
-+ /sample_local_go_grpc_graphql/article/configに.envを作成し、下記のようにコーディング。
++ /sample_go_grpc_graphql/article/configに.envを作成し、下記のようにコーディング。
 	~~~bash:.env
-	SQLITE3_PATH=あなたのローカルのclone先/sample_local_go_grpc_graphql/article/mydb.sqlite3
+	SQLITE3_PATH=あなたのローカルのclone先/sample_go_grpc_graphql/article/mydb.sqlite3
 	~~~
 ### 必要ならば
 + もし、これを利用して、自身のGitHubにアップロードする場合、go moduleのパスは変更しましょう。
 	```bash
 	# go moduleのパス変更
-	go mod edit -module github.com/あなたのGitHubアカウント名/sample_local_go_grpc_graphql/article
+	go mod edit -module github.com/あなたのGitHubアカウント名/sample_go_grpc_graphql/article
 	# go moduleを更新
 	go mod tidy
 	```
