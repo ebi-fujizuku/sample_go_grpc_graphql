@@ -75,8 +75,7 @@ message CreateArticlesRequest {
 
 // CREATEした複数記事のIDを返す
 message CreateArticlesResponse {
-	// repeated int64 id = 1;
-	string message = 1;
+	repeated int64 id = 1;
 }
 
 // articleサービスを定義

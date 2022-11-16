@@ -114,7 +114,7 @@ func (c *Client)Creates() {
 	if err != nil{
 		fmt.Println(err)
 	}else{
-		fmt.Println(res.GetMessage())
+		fmt.Println(res.GetId())
 	}
 
 	fmt.Printf("CreatesArticle Response: %v\n",res)

@@ -132,13 +132,13 @@ func (s *Service)CreateArticles(stream pb.ArticleService_CreateArticlesServer)er
 		req,err := stream.Recv();
 		if errors.Is(err,io.EOF){
 			fmt.Println("Create inputs:")
-			message := ""
-			for _,article := range articleList{
+			ids := make([]int64,0,3)
+			for idx,article := range articleList{
 				fmt.Println(article)
-				message += article.Title + ","
+				ids = append(ids, int64(idx))
 			}
 			return stream.SendAndClose(&pb.CreateArticlesResponse{
-				Message: message,
+				Id: ids,
 			})
 		}
 		if err != nil{
