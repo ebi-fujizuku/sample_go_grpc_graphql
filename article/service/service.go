@@ -34,7 +34,7 @@ func (s *Service)CreateArticle(ctx context.Context, req *pb.CreateArticleRequest
 	input := req.ArticleInput
 
 	// 記事をDBにINSERTし、INSERTした記事のIDを返す
-	id,err := s.repository.InsertArticle(ctx,input)
+	id,err := s.repository.InsertArticle(input)
 	if err != nil{
 		return nil,err
 	}
@@ -133,9 +133,13 @@ func (s *Service)CreateArticles(stream pb.ArticleService_CreateArticlesServer)er
 		if errors.Is(err,io.EOF){
 			fmt.Println("Create inputs:")
 			ids := make([]int64,0,3)
-			for idx,article := range articleList{
+			for _,article := range articleList{
 				fmt.Println(article)
-				ids = append(ids, int64(idx))
+				id,err := s.repository.InsertArticle(article)
+				if err != nil{
+					return err
+				}
+				ids = append(ids, id)
 			}
 			return stream.SendAndClose(&pb.CreateArticlesResponse{
 				Id: ids,

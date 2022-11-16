@@ -13,7 +13,7 @@ import (
 )
 
 type Repository interface{
-	InsertArticle(context.Context,*pb.ArticleInput)(int64,error)
+	InsertArticle(*pb.ArticleInput)(int64,error)
 	SelectArticleByID(context.Context,int64)(*pb.Article,error)
 	UpdateArticle(context.Context,int64,*pb.ArticleInput)error
 	DeleteArticle(context.Context,int64)error
@@ -57,9 +57,8 @@ func NewSqliteRepo()(Repository,error){
 	return &sqliteRepo{db},nil
 }
 
-func (r *sqliteRepo) InsertArticle(ctx context.Context,input *pb.ArticleInput) (int64, error) {
+func (r *sqliteRepo) InsertArticle(input *pb.ArticleInput) (int64, error) {
 	common.PrintStart("")
-	fmt.Println("repository.InsertArticle")
 	// Inputの内容(Author, Title, Content)をarticlesテーブルにINSERT
 	cmd := "INSERT INTO articles(author, title, content) VALUES (?, ?, ?)"
 	result, err := r.db.Exec(cmd, input.Author, input.Title, input.Content)
