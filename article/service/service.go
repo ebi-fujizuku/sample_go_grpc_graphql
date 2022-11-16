@@ -127,11 +127,16 @@ func (s *Service)ListArticle(
 
 func (s *Service)CreateArticles(stream pb.ArticleService_CreateArticlesServer)error{
 	common.PrintStart("")
-	articleList := make([]string,0)
+	articleList := make([]*pb.ArticleInput,0,3)
 	for{
 		req,err := stream.Recv();
 		if errors.Is(err,io.EOF){
-			message := fmt.Sprintf("Create inputs, %v!",articleList)
+			fmt.Println("Create inputs:")
+			message := ""
+			for _,article := range articleList{
+				fmt.Println(article)
+				message += article.Title + ","
+			}
 			return stream.SendAndClose(&pb.CreateArticlesResponse{
 				Message: message,
 			})

@@ -84,10 +84,26 @@ func (c *Client)Creates() {
 		return
 	}
 
-	titles := []string{"my hero academia","smile on runway","mob psycho 100"}
-	for _,title := range titles{
+	articles := make([]*pb.ArticleInput,0,3)
+	articles = append(articles,&pb.ArticleInput{
+		Author: "Kohei Horikoshi",
+		Title: "my hero academia",
+		Content: "Izuku Midoriya is Nice!",
+	})
+	articles = append(articles,&pb.ArticleInput{
+		Author: "Kotoba Inotani",
+		Title: "smile on runway",
+		Content: "Chiyuki Fujito is Cute & Cool!",
+	})
+	articles = append(articles,&pb.ArticleInput{
+		Author: "ONE",
+		Title: "mob psycho 100",
+		Content: "Mob is String!",
+	})
+
+	for _,article := range articles{
 		if err := stream.Send(&pb.CreateArticlesRequest{
-			ArticleInput: title,
+			ArticleInput: article,
 		}); err != nil{
 			fmt.Println(err)
 			return
