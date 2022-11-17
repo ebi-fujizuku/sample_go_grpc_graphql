@@ -78,6 +78,17 @@ message CreateArticlesResponse {
 	repeated int64 id = 1;
 }
 
+// CREATEする複数記事の内容を受け取る
+message FreeReadArticlesRequest {
+	int64 id = 1;
+}
+
+// CREATEする複数記事の内容を受け取る
+message FreeReadArticlesResponse {
+	// Article article = 1;
+	string message = 1;
+}
+
 // articleサービスを定義
 service ArticleService {
 	rpc CreateArticle(CreateArticleRequest) returns(CreateArticleResponse);
@@ -86,4 +97,5 @@ service ArticleService {
 	rpc DeleteArticle(DeleteArticleRequest) returns(DeleteArticleResponse);
 	rpc ListArticle(ListArticleRequest) returns(stream ListArticleResponse);
 	rpc CreateArticles(stream CreateArticlesRequest) returns(CreateArticlesResponse);
+	rpc FreeReadArticles(stream FreeReadArticlesRequest) returns(stream FreeReadArticlesResponse);
 }

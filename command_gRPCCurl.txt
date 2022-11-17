@@ -3,3 +3,6 @@ grpcurl -plaintext -d '{"articleInput": "aaa"}' localhost:8080 article.ArticleSe
 
 // クライアントストリーミング
 grpcurl -plaintext -d '{"articleInput": "aaa"}{"articleInput": "bbb"}{"articleInput": "ccc"}' localhost:8080 article.ArticleService.CreateArticles
+
+// 双方向ストリーミング
+grpcurl -plaintext -d '{"id": 1}{"id": 2}{"id": 3}' localhost:8080 article.ArticleService.FreeReadArticles

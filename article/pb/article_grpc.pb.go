@@ -28,6 +28,7 @@ type ArticleServiceClient interface {
 	DeleteArticle(ctx context.Context, in *DeleteArticleRequest, opts ...grpc.CallOption) (*DeleteArticleResponse, error)
 	ListArticle(ctx context.Context, in *ListArticleRequest, opts ...grpc.CallOption) (ArticleService_ListArticleClient, error)
 	CreateArticles(ctx context.Context, opts ...grpc.CallOption) (ArticleService_CreateArticlesClient, error)
+	FreeReadArticles(ctx context.Context, opts ...grpc.CallOption) (ArticleService_FreeReadArticlesClient, error)
 }
 
 type articleServiceClient struct {
@@ -140,6 +141,37 @@ func (x *articleServiceCreateArticlesClient) CloseAndRecv() (*CreateArticlesResp
 	return m, nil
 }
 
+func (c *articleServiceClient) FreeReadArticles(ctx context.Context, opts ...grpc.CallOption) (ArticleService_FreeReadArticlesClient, error) {
+	stream, err := c.cc.NewStream(ctx, &ArticleService_ServiceDesc.Streams[2], "/article.ArticleService/FreeReadArticles", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &articleServiceFreeReadArticlesClient{stream}
+	return x, nil
+}
+
+type ArticleService_FreeReadArticlesClient interface {
+	Send(*FreeReadArticlesRequest) error
+	Recv() (*FreeReadArticlesResponse, error)
+	grpc.ClientStream
+}
+
+type articleServiceFreeReadArticlesClient struct {
+	grpc.ClientStream
+}
+
+func (x *articleServiceFreeReadArticlesClient) Send(m *FreeReadArticlesRequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *articleServiceFreeReadArticlesClient) Recv() (*FreeReadArticlesResponse, error) {
+	m := new(FreeReadArticlesResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // ArticleServiceServer is the server API for ArticleService service.
 // All implementations must embed UnimplementedArticleServiceServer
 // for forward compatibility
@@ -150,6 +182,7 @@ type ArticleServiceServer interface {
 	DeleteArticle(context.Context, *DeleteArticleRequest) (*DeleteArticleResponse, error)
 	ListArticle(*ListArticleRequest, ArticleService_ListArticleServer) error
 	CreateArticles(ArticleService_CreateArticlesServer) error
+	FreeReadArticles(ArticleService_FreeReadArticlesServer) error
 	mustEmbedUnimplementedArticleServiceServer()
 }
 
@@ -174,6 +207,9 @@ func (UnimplementedArticleServiceServer) ListArticle(*ListArticleRequest, Articl
 }
 func (UnimplementedArticleServiceServer) CreateArticles(ArticleService_CreateArticlesServer) error {
 	return status.Errorf(codes.Unimplemented, "method CreateArticles not implemented")
+}
+func (UnimplementedArticleServiceServer) FreeReadArticles(ArticleService_FreeReadArticlesServer) error {
+	return status.Errorf(codes.Unimplemented, "method FreeReadArticles not implemented")
 }
 func (UnimplementedArticleServiceServer) mustEmbedUnimplementedArticleServiceServer() {}
 
@@ -307,6 +343,32 @@ func (x *articleServiceCreateArticlesServer) Recv() (*CreateArticlesRequest, err
 	return m, nil
 }
 
+func _ArticleService_FreeReadArticles_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(ArticleServiceServer).FreeReadArticles(&articleServiceFreeReadArticlesServer{stream})
+}
+
+type ArticleService_FreeReadArticlesServer interface {
+	Send(*FreeReadArticlesResponse) error
+	Recv() (*FreeReadArticlesRequest, error)
+	grpc.ServerStream
+}
+
+type articleServiceFreeReadArticlesServer struct {
+	grpc.ServerStream
+}
+
+func (x *articleServiceFreeReadArticlesServer) Send(m *FreeReadArticlesResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *articleServiceFreeReadArticlesServer) Recv() (*FreeReadArticlesRequest, error) {
+	m := new(FreeReadArticlesRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // ArticleService_ServiceDesc is the grpc.ServiceDesc for ArticleService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -340,6 +402,12 @@ var ArticleService_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "CreateArticles",
 			Handler:       _ArticleService_CreateArticles_Handler,
+			ClientStreams: true,
+		},
+		{
+			StreamName:    "FreeReadArticles",
+			Handler:       _ArticleService_FreeReadArticles_Handler,
+			ServerStreams: true,
 			ClientStreams: true,
 		},
 	},

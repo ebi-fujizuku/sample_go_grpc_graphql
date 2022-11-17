@@ -151,3 +151,22 @@ func (s *Service)CreateArticles(stream pb.ArticleService_CreateArticlesServer)er
 		articleList = append(articleList, req.GetArticleInput())
 	}
 }
+
+func (s *Service)FreeReadArticles(stream pb.ArticleService_FreeReadArticlesServer)error{
+	for{
+		req,err := stream.Recv()
+		if errors.Is(err,io.EOF){
+			return nil
+		}
+		if err != nil{
+			return err
+		}
+		fmt.Println(req.GetId()," is Nice!")
+		if err := stream.Send(&pb.FreeReadArticlesResponse{
+			Message: fmt.Sprintf("Hello %v",req.GetId()),
+		});err != nil{
+			return err
+		}
+	}
+
+}

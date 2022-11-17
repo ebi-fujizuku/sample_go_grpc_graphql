@@ -1,15 +1,21 @@
 https://zenn.dev/k88t76/books/f3892660871ab2/viewer/c21e29
-//Chapter2
+//Install
 go mod init github.com/ebi-fujizuku/sample_go_grpc_graphql/article
-//Chapter3
 go get -u google.golang.org/grpc
 go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28
 go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
 // ~/zshrcに書き込んでsource ~/.zshrc
 export PATH=$PATH:$(go env GOPATH)/bin
+
+//proto実行
 (articlディレクトリで)
 protoc --go_out=./pb --go_opt=paths=source_relative \
        --go-grpc_out=./pb --go-grpc_opt=paths=source_relative \
        ./article.proto
 //Chapter 05: gRPCサーバーを動かしてみよう
+
+// sqlite3
 go get -u github.com/mattn/go-sqlite3
+
+(articlディレクトリで)
+sqlite3 mydb.sqlite3
