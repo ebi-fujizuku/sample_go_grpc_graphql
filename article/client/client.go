@@ -76,6 +76,30 @@ func (c *Client)Delete() {
 	fmt.Printf("DeleteArticle Response: %v\n",res)
 }
 
+func (c *Client)List() {
+	//streamレスポンスを受ける
+	stream,err := c.Service.ListArticle(
+		context.Background(),
+		&pb.ListArticleRequest{},
+	)
+	if err != nil{
+		log.Fatalf("Failed to ListArticle: %v\n",err)
+	}
+
+	// Server Streamで渡されたレスポンスを1つ1つ出力
+	for{
+		res,err := stream.Recv()
+		if err == io.EOF{
+			fmt.Println("all the responses have already received.")
+			break
+		}
+		if err != nil{
+			log.Fatalf("Failed to Server Streaming: %v\n",err)
+		}
+		fmt.Println(res)
+	}
+}
+
 func (c *Client)Creates() {
 	stream,err := c.Service.CreateArticles(
 		context.Background(),
@@ -162,33 +186,5 @@ func (c *Client)FreeReadArticles() {
 				fmt.Println(res.GetMessage())
 			}
 		}
-	}
-}
-
-
-type Client_ServerStream struct{
-	Service pb.ArticleServiceClient
-}
-func (c_ss *Client_ServerStream)List() {
-	//streamレスポンスを受ける
-	stream,err := c_ss.Service.ListArticle(
-		context.Background(),
-		&pb.ListArticleRequest{},
-	)
-	if err != nil{
-		log.Fatalf("Failed to ListArticle: %v\n",err)
-	}
-
-	// Server Streamで渡されたレスポンスを1つ1つ出力
-	for{
-		res,err := stream.Recv()
-		if err == io.EOF{
-			fmt.Println("all the responses have already received.")
-			break
-		}
-		if err != nil{
-			log.Fatalf("Failed to Server Streaming: %v\n",err)
-		}
-		fmt.Println(res)
 	}
 }
