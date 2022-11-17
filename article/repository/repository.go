@@ -14,7 +14,7 @@ import (
 
 type Repository interface{
 	InsertArticle(*pb.ArticleInput)(int64,error)
-	SelectArticleByID(context.Context,int64)(*pb.Article,error)
+	SelectArticleByID(int64)(*pb.Article,error)
 	UpdateArticle(context.Context,int64,*pb.ArticleInput)error
 	DeleteArticle(context.Context,int64)error
 	SelectAllArticles()(*sql.Rows,error)
@@ -78,7 +78,7 @@ func (r *sqliteRepo) InsertArticle(input *pb.ArticleInput) (int64, error) {
 	return id, nil
 }
 
-func (r *sqliteRepo)SelectArticleByID(ctx context.Context,id int64)(*pb.Article,error){
+func (r *sqliteRepo)SelectArticleByID(id int64)(*pb.Article,error){
 	// 該当IDの記事をSELECT
 	cmd := "SELECT * FROM articles WHERE id = ?"
 	row := r.db.QueryRow(cmd,id)

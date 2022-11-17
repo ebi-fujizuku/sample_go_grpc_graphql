@@ -54,7 +54,7 @@ func (s *Service)ReadArticle(ctx context.Context, req *pb.ReadArticleRequest)(*p
 	id := req.GetId()
 
 	// DBから該当IDの記事を取得
-	a,err := s.repository.SelectArticleByID(ctx,id)
+	a,err := s.repository.SelectArticleByID(id)
 	if err != nil{
 		return nil,err
 	}
@@ -162,12 +162,17 @@ func (s *Service)FreeReadArticles(stream pb.ArticleService_FreeReadArticlesServe
 			return err
 		}
 		fmt.Println(req.GetId()," is Nice!")
-		if err := stream.Send(&pb.FreeReadArticlesResponse{
-			Article: &pb.Article{
-				Id: req.GetId(),
-				Author: "Shohei Horikoshi",
-				Title: "My Hero Academia",
-				Content: "This Manga is Nice!",
+		a,err := s.repository.SelectArticleByID(req.GetId())
+		if err != nil{
+			return err
+		}
+
+		if err = stream.Send(&pb.FreeReadArticlesResponse{
+			Article:&pb.Article{
+				Id: a.GetId(),
+				Author: a.GetAuthor(),
+				Title: a.GetTitle(),
+				Content: a.GetContent(),
 			},
 		});err != nil{
 			return err
