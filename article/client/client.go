@@ -9,6 +9,8 @@ import (
 
 	"github.com/ebi-fujizuku/sample_go_grpc_graphql/article/common"
 	"github.com/ebi-fujizuku/sample_go_grpc_graphql/article/pb"
+	_ "google.golang.org/genproto/googleapis/rpc/errdetails"
+	"google.golang.org/grpc/status"
 )
 
 type Client struct{
@@ -197,7 +199,31 @@ func (c *Client)ErrorArticle(){
 		&pb.ReadArticleRequest{Id: id},
 	)
 	if err != nil{
-		fmt.Printf("Error: %v\n",err)
+		if stat,ok := status.FromError(err); ok{
+			fmt.Printf("code: %s\n",stat.Code())
+			fmt.Printf("message: %s\n",stat.Message())
+		}else{
+			fmt.Println()
+		}
+	}else{
+		fmt.Printf("Success: %v\n",res.GetArticle())
+	}
+}
+
+func (c *Client)RichErrorArticle(){
+	id := int64(1)
+	res,err := c.Service.ErrorArticle(
+		context.Background(),
+		&pb.ReadArticleRequest{Id: id},
+	)
+	if err != nil{
+		if stat,ok := status.FromError(err); ok{
+			fmt.Printf("code: %s\n",stat.Code())
+			fmt.Printf("message: %s\n",stat.Message())
+			fmt.Printf("details: %s\n",stat.Details())
+		}else{
+			fmt.Println()
+		}
 	}else{
 		fmt.Printf("Success: %v\n",res.GetArticle())
 	}

@@ -9,6 +9,7 @@ import (
 	"github.com/ebi-fujizuku/sample_go_grpc_graphql/article/common"
 	"github.com/ebi-fujizuku/sample_go_grpc_graphql/article/pb"
 	"github.com/ebi-fujizuku/sample_go_grpc_graphql/article/repository"
+	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -184,5 +185,14 @@ func (s *Service)FreeReadArticles(stream pb.ArticleService_FreeReadArticlesServe
 
 func (s *Service)ErrorArticle(ctx context.Context, req *pb.ReadArticleRequest)(*pb.ReadArticleResponse,error){
 	err := status.Error(codes.Unknown, "unknown error occurred")
+	return nil, err
+}
+
+func (s *Service)RichErrorArticle(ctx context.Context, req *pb.ReadArticleRequest)(*pb.ReadArticleResponse,error){
+	stat := status.New(codes.Unknown, "unknown error occurred")
+	stat, _ = stat.WithDetails(&errdetails.DebugInfo{
+		Detail: "detail reason of err",
+	})
+	err := stat.Err()
 	return nil, err
 }

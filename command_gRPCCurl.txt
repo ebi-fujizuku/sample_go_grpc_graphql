@@ -9,3 +9,6 @@ grpcurl -plaintext -d '{"id": 1}{"id": 2}{"id": 3}' localhost:8080 article.Artic
 
 // エラー
 grpcurl -plaintext -d '{"id": 1}' localhost:8080 article.ArticleService.ErrorArticle
+
+// リッチなエラー
+grpcurl -plaintext -d '{"id": 1}' localhost:8080 article.ArticleService.RichErrorArticle

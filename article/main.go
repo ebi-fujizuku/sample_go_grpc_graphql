@@ -43,30 +43,37 @@ func main() {
 		Service: pb.NewArticleServiceClient(conn),
 	}
 
-	fmt.Println("--------------------------------")
+	fmt.Println("=========================================")
 
 	// 単方向Stream
 	c.Create()
+	fmt.Println("--------------------------------")
 	c.Read()
+	fmt.Println("--------------------------------")
 	c.Update()
+	fmt.Println("--------------------------------")
 	c.Delete()
 	fmt.Println("--------------------------------")
 
+	fmt.Println("=========================================")
+
 	// ServerStream
 	c.List()
-	fmt.Println("--------------------------------")
+	fmt.Println("=========================================")
 
 	// ClientStream
 	c.Creates()
-	fmt.Println("--------------------------------")
+	fmt.Println("=========================================")
 
 	// 双方向Stream
 	c.FreeReadArticles()
-	fmt.Println("--------------------------------")
+	fmt.Println("=========================================")
 
 	// エラー
 	c.ErrorArticle()
 	fmt.Println("--------------------------------")
+	c.RichErrorArticle()
+	fmt.Println("=========================================")
 
 	common.PrintEnd("gRPC Client")
 }
