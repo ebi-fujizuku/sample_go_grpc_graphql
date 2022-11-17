@@ -56,6 +56,7 @@ func main() {
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
 	<-quit
+	common.PrintDelimiter(1)
 	log.Println("stopping gRPC server...")
 	s.GracefulStop()
 }

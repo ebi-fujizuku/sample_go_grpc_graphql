@@ -18,7 +18,7 @@ type Client struct{
 }
 
 func (c *Client)Create() {
-	common.PrintStart("")
+	common.PrintStart("",0)
 
 	articleInfo := &pb.ArticleInput{
 		Author:  "fujito",
@@ -34,7 +34,7 @@ func (c *Client)Create() {
 		log.Fatalf("Failed to CreateArticle: %v\n",err)
 	}
 	fmt.Printf("CreateArticle Response: %v\n",res.GetArticle())
-	common.PrintEnd("")
+	common.PrintEnd("",0)
 }
 
 func (c *Client)Read() {

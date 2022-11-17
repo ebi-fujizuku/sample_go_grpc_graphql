@@ -13,7 +13,7 @@ import (
 
 
 func main() {
-	common.PrintStart("gRPC Client")
+	common.PrintStart("gRPC Client",0)
 
 	// // クライアント作成
 	// err := client.NewClient(port)
@@ -75,5 +75,5 @@ func main() {
 	c.RichErrorArticle()
 	fmt.Println("=========================================")
 
-	common.PrintEnd("gRPC Client")
+	common.PrintEnd("gRPC Client",0)
 }

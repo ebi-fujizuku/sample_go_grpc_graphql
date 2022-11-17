@@ -10,23 +10,28 @@ func getFunctionName()string{
 	fn := runtime.FuncForPC(programCounter)
 	return fn.Name()
 }
-// func PrintStart(msg string,num int){
-func PrintStart(msg string){
-	// PrintDelimiter(num)
+func PrintStart(msg string,num int){
+	PrintDelimiter(num)
 	if msg == ""{
 		fmt.Println("Start",":", getFunctionName())
 	}else{
 		fmt.Println("Start",msg,":", getFunctionName())
 	}
 }
-// func PrintEnd(msg string,num int){
-func PrintEnd(msg string){
+func PrintEnd(msg string,num int){
 	if msg == ""{
 		fmt.Println("End",":",getFunctionName())
 	}else{
 		fmt.Println("End",msg,":",getFunctionName())
 	}
-	// PrintDelimiter(num)
+	PrintDelimiter(num)
+}
+func PrintPass(msg string){
+	if msg == ""{
+		fmt.Println("Pass",":",getFunctionName())
+	}else{
+		fmt.Println("Pass",msg,":",getFunctionName())
+	}
 }
 const (
 	DELIMITER_1 = "###############################################"

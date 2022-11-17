@@ -24,7 +24,7 @@ type sqliteRepo struct{
 }
 
 func NewSqliteRepo()(Repository,error){
-	common.PrintStart("")
+	common.PrintStart("",0)
 	fmt.Println("repository.NewsqliteRepo")
 	fmt.Println("  conf",myConf.Conf)
 	fmt.Println("  Sqlite3_path",myConf.Conf.Sqlite3_path)
@@ -52,19 +52,17 @@ func NewSqliteRepo()(Repository,error){
 		}
 		fmt.Println("  DB_Create")
 
-		common.PrintEnd("")
+		common.PrintEnd("",0)
 	return &sqliteRepo{db},nil
 }
 
 func (r *sqliteRepo) InsertArticle(input *pb.ArticleInput) (int64, error) {
-	common.PrintStart("")
 	// Inputの内容(Author, Title, Content)をarticlesテーブルにINSERT
 	cmd := "INSERT INTO articles(author, title, content) VALUES (?, ?, ?)"
 	result, err := r.db.Exec(cmd, input.Author, input.Title, input.Content)
 	if err != nil {
 		return 0, err
 	}
-	fmt.Println("  Pass:insert")
 
 	// INSERTした記事のIDを取得
 	id, err := result.LastInsertId()
@@ -73,7 +71,6 @@ func (r *sqliteRepo) InsertArticle(input *pb.ArticleInput) (int64, error) {
 	}
 
 	// INSERTした記事のIDを返す
-	common.PrintEnd("")
 	return id, nil
 }
 

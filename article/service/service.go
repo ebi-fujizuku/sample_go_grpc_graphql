@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/ebi-fujizuku/sample_go_grpc_graphql/article/common"
 	"github.com/ebi-fujizuku/sample_go_grpc_graphql/article/pb"
 	"github.com/ebi-fujizuku/sample_go_grpc_graphql/article/repository"
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
@@ -31,6 +32,7 @@ func NewService()(*Service,error){
 }
 
 func (s *Service)CreateArticle(ctx context.Context, req *pb.CreateArticleRequest)(*pb.CreateArticleResponse,error){
+	common.PrintStart("",4)
 	// INSERTする記事のInputを取得
 	input := req.ArticleInput
 
@@ -39,6 +41,8 @@ func (s *Service)CreateArticle(ctx context.Context, req *pb.CreateArticleRequest
 	if err != nil{
 		return nil,err
 	}
+
+	common.PrintPass("")
 	return &pb.CreateArticleResponse{
 		Article: &pb.Article{
 			Id:      id,
@@ -60,6 +64,7 @@ func (s *Service)ReadArticle(ctx context.Context, req *pb.ReadArticleRequest)(*p
 	}
 
 	// 取得した記事をレスポンスとして返す
+	common.PrintPass("")
 	return &pb.ReadArticleResponse{
 		Article: &pb.Article{
 			Id:      id,
@@ -80,6 +85,7 @@ func (s *Service)UpdateArticle(ctx context.Context, req *pb.UpdateArticleRequest
 	}
 
 	// 取得した記事をレスポンスとして返す
+	common.PrintPass("")
 	return &pb.UpdateArticleResponse{
 		Article: &pb.Article{
 			Id:      id,
@@ -99,6 +105,7 @@ func (s *Service)DeleteArticle(ctx context.Context, req *pb.DeleteArticleRequest
 	}
 
 	// 取得した記事をレスポンスとして返す
+	common.PrintPass("")
 	return &pb.DeleteArticleResponse{Id: id},nil
 }
 
@@ -122,6 +129,7 @@ func (s *Service)ListArticle(
 		stream.Send(&pb.ListArticleResponse{Article: &a})
 	}
 
+	common.PrintPass("")
 	return nil
 }
 
@@ -140,6 +148,7 @@ func (s *Service)CreateArticles(stream pb.ArticleService_CreateArticlesServer)er
 				}
 				ids = append(ids, id)
 			}
+			common.PrintPass("")
 			return stream.SendAndClose(&pb.CreateArticlesResponse{
 				Id: ids,
 			})
@@ -155,6 +164,7 @@ func (s *Service)FreeReadArticles(stream pb.ArticleService_FreeReadArticlesServe
 	for{
 		req,err := stream.Recv()
 		if errors.Is(err,io.EOF){
+			common.PrintPass("")
 			return nil
 		}
 		if err != nil{
@@ -180,15 +190,19 @@ func (s *Service)FreeReadArticles(stream pb.ArticleService_FreeReadArticlesServe
 }
 
 func (s *Service)ErrorArticle(ctx context.Context, req *pb.ReadArticleRequest)(*pb.ReadArticleResponse,error){
+	common.PrintStart("",4)
 	err := status.Error(codes.Unknown, "unknown error occurred")
+	common.PrintPass("")
 	return nil, err
 }
 
 func (s *Service)RichErrorArticle(ctx context.Context, req *pb.ReadArticleRequest)(*pb.ReadArticleResponse,error){
+	common.PrintStart("",4)
 	stat := status.New(codes.Unknown, "unknown error occurred")
 	stat, _ = stat.WithDetails(&errdetails.DebugInfo{
 		Detail: "detail reason of err",
 	})
 	err := stat.Err()
+	common.PrintPass("")
 	return nil, err
 }
