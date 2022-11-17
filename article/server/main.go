@@ -1,12 +1,16 @@
 package main
 
 import (
+	"context"
+	"errors"
 	"fmt"
+	"io"
 	"log"
 	"net"
 	"os"
 	"os/signal"
 
+	"github.com/ebi-fujizuku/sample_go_grpc_graphql/article/common"
 	myConf "github.com/ebi-fujizuku/sample_go_grpc_graphql/article/config"
 	"github.com/ebi-fujizuku/sample_go_grpc_graphql/article/pb"
 	"github.com/ebi-fujizuku/sample_go_grpc_graphql/article/service"
@@ -30,7 +34,10 @@ func main() {
 	}
 
 	// gRPCサーバーを作成
-	s := grpc.NewServer()
+	s := grpc.NewServer(
+		grpc.UnaryInterceptor(myUnaryServerInterceptor1),
+		grpc.StreamInterceptor(myStreamServerInterceptor1),
+	)
 
 	// gRPCサーバーにGreetingServiceを登録
 	pb.RegisterArticleServiceServer(s, service)
@@ -41,6 +48,7 @@ func main() {
 	// 作成したgRPCサーバーを、8080番ポートで稼働させる
 	go func() {
 		log.Printf("start gRPC server port: %v", port)
+		common.PrintDelimiter(1)
 		s.Serve(listener)
 	}()
 
@@ -50,4 +58,40 @@ func main() {
 	<-quit
 	log.Println("stopping gRPC server...")
 	s.GracefulStop()
+}
+
+func myUnaryServerInterceptor1(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler)(resp interface{}, err error){
+	log.Println("[pre]Unary",info.FullMethod,common.DELIMITER_2) // ハンドラの前に割り込ませる前処理
+	res,err := handler(ctx,req) // 本来の処理
+	log.Println("[post]Unary",info.FullMethod,common.DELIMITER_2) // ハンドラの後に割り込ませる前処理
+	return res,err
+}
+
+func myStreamServerInterceptor1(srv interface{}, ss grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error{
+	// ストリームopen時の前処理
+	log.Println("[pre]Stream",info.FullMethod,common.DELIMITER_2)
+	err := handler(srv,&myServerStreamWrapper1{ss})
+	// ストリームがcloseされる時に行われる後処理
+	log.Println("[post]Stream",info.FullMethod,common.DELIMITER_2)
+	return err
+}
+
+type myServerStreamWrapper1 struct{
+	grpc.ServerStream
+}
+
+func (s *myServerStreamWrapper1)RecMsg(m interface{})error{
+	// ストリームからリクエストを受信
+	err := s.ServerStream.RecvMsg(m)
+	// 受信したリクエストを、ハンドラで処理する前に差し込む前処理
+	if !errors.Is(err,io.EOF){
+		log.Println("[pre msg]RecvMsg",m,common.DELIMITER_3)
+	}
+	return err
+}
+
+func (s *myServerStreamWrapper1)SendMsg(m interface{})error{
+	// ハンドラで作成したレスポンスを、ストリームから返信する直前に差し込む後処理
+	log.Println("[post msg]SendMsg",m,common.DELIMITER_3)
+	return s.ServerStream.SendMsg(m)
 }

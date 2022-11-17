@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/ebi-fujizuku/sample_go_grpc_graphql/article/common"
 	"github.com/ebi-fujizuku/sample_go_grpc_graphql/article/pb"
 	"github.com/ebi-fujizuku/sample_go_grpc_graphql/article/repository"
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
@@ -32,7 +31,6 @@ func NewService()(*Service,error){
 }
 
 func (s *Service)CreateArticle(ctx context.Context, req *pb.CreateArticleRequest)(*pb.CreateArticleResponse,error){
-	common.PrintStart("")
 	// INSERTする記事のInputを取得
 	input := req.ArticleInput
 
@@ -41,7 +39,6 @@ func (s *Service)CreateArticle(ctx context.Context, req *pb.CreateArticleRequest
 	if err != nil{
 		return nil,err
 	}
-	common.PrintEnd("")
 	return &pb.CreateArticleResponse{
 		Article: &pb.Article{
 			Id:      id,
@@ -129,7 +126,6 @@ func (s *Service)ListArticle(
 }
 
 func (s *Service)CreateArticles(stream pb.ArticleService_CreateArticlesServer)error{
-	common.PrintStart("")
 	articleList := make([]*pb.ArticleInput,0,3)
 	for{
 		req,err := stream.Recv();
