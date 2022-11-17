@@ -9,6 +9,8 @@ import (
 	"github.com/ebi-fujizuku/sample_go_grpc_graphql/article/common"
 	"github.com/ebi-fujizuku/sample_go_grpc_graphql/article/pb"
 	"github.com/ebi-fujizuku/sample_go_grpc_graphql/article/repository"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 // 自作サービスのインターフェース
@@ -178,5 +180,9 @@ func (s *Service)FreeReadArticles(stream pb.ArticleService_FreeReadArticlesServe
 			return err
 		}
 	}
+}
 
+func (s *Service)ErrorArticle(ctx context.Context, req *pb.ReadArticleRequest)(*pb.ReadArticleResponse,error){
+	err := status.Error(codes.Unknown, "unknown error occurred")
+	return nil, err
 }

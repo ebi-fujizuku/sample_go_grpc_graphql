@@ -97,4 +97,6 @@ service ArticleService {
 	rpc ListArticle(ListArticleRequest) returns(stream ListArticleResponse);
 	rpc CreateArticles(stream CreateArticlesRequest) returns(CreateArticlesResponse);
 	rpc FreeReadArticles(stream FreeReadArticlesRequest) returns(stream FreeReadArticlesResponse);
+	rpc ErrorArticle(ReadArticleRequest) returns(ReadArticleResponse);
+
 }

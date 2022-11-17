@@ -6,3 +6,6 @@ grpcurl -plaintext -d '{"articleInput": "aaa"}{"articleInput": "bbb"}{"articleIn
 
 // 双方向ストリーミング
 grpcurl -plaintext -d '{"id": 1}{"id": 2}{"id": 3}' localhost:8080 article.ArticleService.FreeReadArticles
+
+// エラー
+grpcurl -plaintext -d '{"id": 1}' localhost:8080 article.ArticleService.ErrorArticle
