@@ -189,3 +189,16 @@ func (c *Client)FreeReadArticles() {
 		}
 	}
 }
+
+func (c *Client)ErrorArticle(){
+	id := int64(1)
+	res,err := c.Service.ErrorArticle(
+		context.Background(),
+		&pb.ReadArticleRequest{Id: id},
+	)
+	if err != nil{
+		fmt.Printf("Error: %v\n",err)
+	}else{
+		fmt.Printf("Success: %v\n",res.GetArticle())
+	}
+}

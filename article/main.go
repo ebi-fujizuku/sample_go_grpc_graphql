@@ -64,5 +64,9 @@ func main() {
 	c.FreeReadArticles()
 	fmt.Println("--------------------------------")
 
+	// エラー
+	c.ErrorArticle()
+	fmt.Println("--------------------------------")
+
 	common.PrintEnd("gRPC Client")
 }
