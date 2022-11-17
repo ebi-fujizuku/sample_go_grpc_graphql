@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"context"
 	"database/sql"
 	"errors"
 	"fmt"
@@ -15,8 +14,8 @@ import (
 type Repository interface{
 	InsertArticle(*pb.ArticleInput)(int64,error)
 	SelectArticleByID(int64)(*pb.Article,error)
-	UpdateArticle(context.Context,int64,*pb.ArticleInput)error
-	DeleteArticle(context.Context,int64)error
+	UpdateArticle(int64,*pb.ArticleInput)error
+	DeleteArticle(int64)error
 	SelectAllArticles()(*sql.Rows,error)
 }
 
@@ -98,7 +97,7 @@ func (r *sqliteRepo)SelectArticleByID(id int64)(*pb.Article,error){
 	},nil
 }
 
-func (r *sqliteRepo)UpdateArticle(ctx context.Context,id int64,input *pb.ArticleInput)(error){
+func (r *sqliteRepo)UpdateArticle(id int64,input *pb.ArticleInput)(error){
 	// 該当IDをUPDATE
 	cmd := "UPDATE articles SET author = ?, title = ?, content = ? WHERE id = ?"
 	_, err := r.db.Exec(cmd, input.Author, input.Title, input.Content, id)
@@ -109,7 +108,7 @@ func (r *sqliteRepo)UpdateArticle(ctx context.Context,id int64,input *pb.Article
 	return nil
 }
 
-func (r *sqliteRepo)DeleteArticle(ctx context.Context,id int64)(error){
+func (r *sqliteRepo)DeleteArticle(id int64)(error){
 	// 該当IDをDELETE
 	cmd := "DELETE FROM articles WHERE id = ?"
 	_, err := r.db.Exec(cmd, id)

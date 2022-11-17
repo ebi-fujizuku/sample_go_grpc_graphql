@@ -75,7 +75,7 @@ func (s *Service)UpdateArticle(ctx context.Context, req *pb.UpdateArticleRequest
 	input := req.GetArticleInput()
 
 	// 該当記事をUPDATE
-	if err := s.repository.UpdateArticle(ctx,id,input); err != nil{
+	if err := s.repository.UpdateArticle(id,input); err != nil{
 		return nil,err
 	}
 
@@ -94,7 +94,7 @@ func (s *Service)DeleteArticle(ctx context.Context, req *pb.DeleteArticleRequest
 	id    := req.GetId()
 
 	// 該当記事をUPDATE
-	if err := s.repository.DeleteArticle(ctx,id); err != nil{
+	if err := s.repository.DeleteArticle(id); err != nil{
 		return nil,err
 	}
 
