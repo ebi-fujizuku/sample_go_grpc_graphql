@@ -85,8 +85,7 @@ message FreeReadArticlesRequest {
 
 // CREATEする複数記事の内容を受け取る
 message FreeReadArticlesResponse {
-	// Article article = 1;
-	string message = 1;
+	Article article = 1;
 }
 
 // articleサービスを定義

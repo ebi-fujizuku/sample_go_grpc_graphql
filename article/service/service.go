@@ -163,7 +163,12 @@ func (s *Service)FreeReadArticles(stream pb.ArticleService_FreeReadArticlesServe
 		}
 		fmt.Println(req.GetId()," is Nice!")
 		if err := stream.Send(&pb.FreeReadArticlesResponse{
-			Message: fmt.Sprintf("Hello %v",req.GetId()),
+			Article: &pb.Article{
+				Id: req.GetId(),
+				Author: "Shohei Horikoshi",
+				Title: "My Hero Academia",
+				Content: "This Manga is Nice!",
+			},
 		});err != nil{
 			return err
 		}

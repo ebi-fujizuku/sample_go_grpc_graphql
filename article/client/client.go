@@ -151,23 +151,24 @@ func (c *Client)FreeReadArticles() {
 		log.Fatalf("Failde to FreeReadArticles: %v\n",err)
 		return
 	}
-	sendNum := 3
+	sendNum := []int{35,36,37}
 
 	var sendEnd,recvEnd bool
 	sendCount := 0
+	const MAX_COUNT = 3
 	for !(sendEnd && recvEnd){
 		// 送信処理
 		if !sendEnd{
-			sendCount++
 			// 送信
 			if err := stream.Send(&pb.FreeReadArticlesRequest{
-				Id: int64(sendCount),
+				Id: int64(sendNum[sendCount]),
 			});err != nil{
 				fmt.Println(err)
 				sendEnd = true
 			}
 			// sendEnd判定
-			if sendCount == sendNum{
+			sendCount++
+			if sendCount == MAX_COUNT{
 				sendEnd = true
 				if err := stream.CloseSend();err != nil{
 					fmt.Println(err)
@@ -183,7 +184,7 @@ func (c *Client)FreeReadArticles() {
 				}
 				recvEnd = true
 			}else{
-				fmt.Println(res.GetMessage())
+				fmt.Println(res.GetArticle())
 			}
 		}
 	}
