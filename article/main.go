@@ -56,8 +56,13 @@ func main() {
 	c_ss.List()
 	fmt.Println("--------------------------------")
 
-	// ClientStreamのgRPCクライアントを生成
+	// ClientStream
 	c.Creates()
+	fmt.Println("--------------------------------")
+
+	// 双方向Stream
+	c.FreeReadArticles()
+	fmt.Println("--------------------------------")
 
 	common.PrintEnd("gRPC Client")
 }

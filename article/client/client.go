@@ -2,6 +2,7 @@ package client
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -120,6 +121,49 @@ func (c *Client)Creates() {
 	fmt.Printf("CreatesArticle Response: %v\n",res)
 }
 
+func (c *Client)FreeReadArticles() {
+	stream,err := c.Service.FreeReadArticles(context.Background())
+	if err != nil{
+		log.Fatalf("Failde to FreeReadArticles: %v\n",err)
+		return
+	}
+	sendNum := 3
+
+	var sendEnd,recvEnd bool
+	sendCount := 0
+	for !(sendEnd && recvEnd){
+		// 送信処理
+		if !sendEnd{
+			sendCount++
+			// 送信
+			if err := stream.Send(&pb.FreeReadArticlesRequest{
+				Id: int64(sendCount),
+			});err != nil{
+				fmt.Println(err)
+				sendEnd = true
+			}
+			// sendEnd判定
+			if sendCount == sendNum{
+				sendEnd = true
+				if err := stream.CloseSend();err != nil{
+					fmt.Println(err)
+				}
+			}
+		}
+		// 受信処理
+		if !recvEnd{
+			res,err := stream.Recv()
+			if err != nil{
+				if !errors.Is(err,io.EOF){
+					fmt.Println(err)
+				}
+				recvEnd = true
+			}else{
+				fmt.Println(res.GetMessage())
+			}
+		}
+	}
+}
 
 
 type Client_ServerStream struct{
